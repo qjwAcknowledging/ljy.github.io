@@ -5146,7 +5146,7 @@ mjx-assistive-mml {
   }
 }
 [data-theme="dark"] #web_bg {
-  background: /img/3.jpg;
+  background: /img/1.jpg;
   background-attachment: local;
   background-position: center;
   background-size: cover;
@@ -5154,14 +5154,14 @@ mjx-assistive-mml {
 }
 @media screen and (max-width: 800px) {
   #web_bg {
-    background: /img/3.jpg !important;
+    background: /img/4.jpg !important;
     background-attachment: local !important;
     background-position: center !important;
     background-size: cover !important;
     background-repeat: no-repeat !important;
   }
   [data-theme="dark"] #web_bg {
-    background: /img/3.jpg !important;
+    background: /img/2.jpg#【可选】移动端夜间模式背景 !important;
     background-attachment: local !important;
     background-position: center !important;
     background-size: cover !important;
