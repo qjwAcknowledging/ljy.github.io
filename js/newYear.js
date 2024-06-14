@@ -1,58 +1,64 @@
-let newYearTimer = null;
+var newYear = () => {
+  if (!document.querySelector('#newYear')) return;
+  // 新年时间戳 and 星期对象
+  let now = new Date();
+  let year = now.getFullYear();
+  let nextSpringFestival = new Date(`${year}-01-01 00:00:00`);
+  if (nextSpringFestival < now) {
+    nextSpringFestival = new Date(`${year + 1}-01-01 00:00:00`);
+  }
+  let week = { 0: '周日', 1: '周一', 2: '周二', 3: '周三', 4: '周四', 5: '周五', 6: '周六' };
 
-function startNewYearCountdown() {
-    clearTimeout(newYearTimer);
-    if (!document.querySelector('#newYear')) return;
+  time();
 
-    let newYearTimestamp = new Date('2023-01-22 00:00:00').getTime() / 1000;
-    let week = { 0: '周日', 1: '周一', 2: '周二', 3: '周三', 4: '周四', 5: '周五', 6: '周六' };
+  // 补零函数
+  function nol(h) { return h > 9 ? h : '0' + h; }
 
-    updateTime();
+  function time() {
+    // 现在 时间对象
+    let now = new Date();
 
-    function updateTime() {
-        let now = new Date();
+    // 右下角 今天
+    document.querySelector('#newYear .today').innerHTML = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + week[now.getDay()];
 
-        document.querySelector('#newYear .today').innerHTML = now.getFullYear() + '-' + (now.getMonth() + 1) + '-' + now.getDate() + ' ' + week[now.getDay()];
+    // 现在与新年相差秒数
+    let second = Math.round((nextSpringFestival.getTime() - now.getTime()) / 1000);
 
-        let secondsRemaining = newYearTimestamp - Math.round(now.getTime() / 1000);
+    // 小于0则表示已经过年
+    if (second < 0) {
+      document.querySelector('#newYear .title').innerHTML = 'Happy New Year!';
+      document.querySelector('#newYear .newYear-time').innerHTML = '<span class="happyNewYear">新年快乐</p>';
+    } else {
+      // 大于0则还未过年
+      document.querySelector('#newYear .title').innerHTML = `距离${nextSpringFestival.getFullYear()}年春节：`;
 
-        if (secondsRemaining < 0) {
-            document.querySelector('#newYear .title').innerHTML = 'Happy New Year!';
-            document.querySelector('#newYear .newYear-time').innerHTML = '<span class="happyNewYear">新年快乐</span>';
-        } else {
-            document.querySelector('#newYear .title').innerHTML = '距离2023年春节：';
-
-            if (secondsRemaining > 86400) {
-                document.querySelector('#newYear .newYear-time').innerHTML = `<span class="day">${Math.ceil(secondsRemaining / 86400)}<span class="unit">天</span></span>`;
-            } else {
-                let hours = padZero(Math.floor(secondsRemaining / 3600));
-                secondsRemaining %= 3600;
-                let minutes = padZero(Math.floor(secondsRemaining / 60));
-                secondsRemaining %= 60;
-                let seconds = padZero(secondsRemaining);
-                document.querySelector('#newYear .newYear-time').innerHTML = `<span class="time">${hours}:${minutes}:${seconds}</span>`;
-                newYearTimer = setTimeout(updateTime, 1000);
-            }
-        }
+      // 大于一天则直接渲染天数
+      if (second > 86400) {
+        document.querySelector('#newYear .newYear-time').innerHTML = `<span class="day">${Math.ceil(second / 86400)}<span class="unit">天</span></span>`;
+      } else {
+        // 小于一天则使用时分秒计时。
+        let h = nol(parseInt(second / 3600));
+        second %= 3600;
+        let m = nol(parseInt(second / 60));
+        second %= 60;
+        let s = nol(second);
+        document.querySelector('#newYear .newYear-time').innerHTML = `<span class="time">${h}:${m}:${s}</span>`;
+        // 计时
+        newYearTimer = setTimeout(time, 1000);
+      }
     }
+  }
 
-    function padZero(num) {
-        return num < 10 ? '0' + num : num;
-    }
-
-    // 元宝飘落
-    $(document).ready(function () {
-        $('#newYear').wpSuperSnow({
-            flakes: ['https://tuchuang.voooe.cn/images/2023/01/02/yb1.webp', 'https://tuchuang.voooe.cn/images/2023/01/02/yb2.webp', 'https://tuchuang.voooe.cn/images/2023/01/02/yb3.webp'],
-            totalFlakes: '100',
-            zIndex: '999999',
-            maxSize: '30',
-            maxDuration: '20',
-            useFlakeTrans: false
-        });
+  // 元宝飘落
+  jQuery(document).ready(function ($) {
+    $('#newYear').wpSuperSnow({
+      flakes: ['https://img.cdn.tencent-qq.cn/Yize/2023/01/5258db16c205b467.webp', 'https://img.cdn.tencent-qq.cn/Yize/2023/01/acaf8ad0e1df4bf0.webp', 'https://img.cdn.tencent-qq.cn/Yize/2023/01/0d3789f6ba30bbc2.webp'],
+      totalFlakes: '100',
+      zIndex: '999999',
+      maxSize: '30',
+      maxDuration: '20',
+      useFlakeTrans: false
     });
+  });
 }
-
-// Pjax适配
-document.addEventListener('pjax:complete', startNewYearCountdown);
-document.addEventListener('DOMContentLoaded', startNewYearCountdown);
+newYear();
